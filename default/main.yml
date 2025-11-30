@@ -1,2 +1,10 @@
 ---
 is_tactile: false
+
+user_name: ""
+
+dash_apps: []
+
+is_darkmode: true
+
+background_file: "'file:///usr/share/backgrounds/gnome/keys-l.jpg'"

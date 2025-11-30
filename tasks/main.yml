@@ -26,3 +26,42 @@
     name: gnome-tweaks
     state: present
   when: is_tactile | bool
+
+- set_fact:
+    is_dash_apps: "{{ dash_apps | length > 0 }}"
+    is_background: "{{ background_file | length > 0 }}"
+    need_dconf: "{{ is_dash_apps or is_background or is_darkmode }}"
+
+- name: Install dconf command-line tools
+  apt:
+    name: dconf-cli
+    state: present
+    update_cache: yes
+  when: need_dconf and (user_name | length > 0)
+
+- name: Configure GNOME dash favorite apps
+  become: yes
+  become_user: "{{ user_name }}"
+  dconf:
+    key: "/org/gnome/shell/favorite-apps"
+    value: "{{ dash_apps }}"
+    state: present
+  when: is_dash_apps and (user_name | length > 0)
+
+- name: Set GNOME desktop background
+  become: yes
+  become_user: "{{ user_name }}"
+  dconf:
+    key: "/org/gnome/desktop/background/picture-uri"
+    value: "{{ background_file }}"
+    state: present
+  when: is_background and (user_name | length > 0)
+
+- name: Enable GNOME dark theme
+  become: yes
+  become_user: "{{ user_name }}"
+  dconf:
+    key: "/org/gnome/desktop/interface/color-scheme"
+    value: "'prefer-dark'"
+    state: present
+  when: is_darkmode and (user_name | length > 0)
