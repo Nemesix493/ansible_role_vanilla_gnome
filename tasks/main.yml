@@ -30,11 +30,18 @@
 - set_fact:
     is_dash_apps: "{{ dash_apps | length > 0 }}"
     is_background: "{{ background_file | length > 0 }}"
+    background_key: "{{ '/org/gnome/desktop/background/picture-uri-dark'
+                         if is_darkmode else
+                         '/org/gnome/desktop/background/picture-uri' }}"
+
+- set_fact:
     need_dconf: "{{ is_dash_apps or is_background or is_darkmode }}"
 
-- name: Install dconf command-line tools
+- name: Install dconf command-line tools and psutil system package
   apt:
-    name: dconf-cli
+    name:
+      - dconf-cli
+      - python3-psutil
     state: present
     update_cache: yes
   when: need_dconf and (user_name | length > 0)
@@ -52,7 +59,7 @@
   become: yes
   become_user: "{{ user_name }}"
   dconf:
-    key: "/org/gnome/desktop/background/picture-uri"
+    key: "{{ background_key }}"
     value: "{{ background_file }}"
     state: present
   when: is_background and (user_name | length > 0)
