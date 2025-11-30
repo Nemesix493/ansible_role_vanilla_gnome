@@ -1,0 +1,28 @@
+---
+- name: Remove ubuntu desktop
+  apt:
+    name: ubuntu-desktop-minimal
+    state: absent
+    purge: yes
+  
+- name: Clean dependencies
+  apt:
+    autoremove: yes
+
+- name: Install pulseaudio for gnome
+  apt:
+    name: pulseaudio
+    state: present
+
+- name: Install vanilla gnome
+  apt:
+    name: 
+      - vanilla-gnome-desktop
+      - gdm3
+    state: present
+
+- name: Install GNOME Tweaks for tactile screen
+  apt:
+    name: gnome-tweaks
+    state: present
+  when: is_tactile | bool
