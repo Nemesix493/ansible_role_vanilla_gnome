@@ -1,7 +1,7 @@
 ---
 is_tactile: false
 
-user_name: ""
+user_name: "{{ lookup('env','USER') }}"
 
 dash_apps: []
 
